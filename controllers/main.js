@@ -5,7 +5,7 @@
 //setup authentication so only the request with JWT can access the dashboard
 
 const jwt = require("jsonwebtoken");
-const CustomAPIError = require("../errors/custom-error");
+const { BadRequest } = require("../errors");
 
 const login = async (req, res) => {
   const { username, password } = req.body;
@@ -13,7 +13,7 @@ const login = async (req, res) => {
   //
 
   if (!username || !password) {
-    throw new CustomAPIError("please provide email and password", 400);
+    throw new CustomAPIError("please provide email and password");
   }
   // console.log(username,password)
 
@@ -30,32 +30,37 @@ const login = async (req, res) => {
 };
 
 const dashboard = async (req, res) => {
+
+   console.log(req.user) 
+
   // console.log(req.headers)
 
-  const authHeader = req.headers.authorization;
+// {  const authHeader = req.headers.authorization;
 
-  if (!authHeader || !authHeader.startsWith("Bearer ")) {
-    throw new CustomAPIError("No Token provided", 401);
-  }
+//   if (!authHeader || !authHeader.startsWith("Bearer ")) {
+//     throw new CustomAPIError("No Token provided", 401);
+//   }
 
-  const token = authHeader.split(" ")[1];
+//   const token = authHeader.split(" ")[1];}
 
   //   console.log({token : token})
 
-  try {
-    const decoded = jwt.verify(token,process.env.JWT_SECRET)
+// {  try {
+//     const decoded = jwt.verify(token,process.env.JWT_SECRET)
+
+
 
     const luckyNumber = Math.floor(Math.random() * 100);
 
     res.status(200).json({
-      msg: `Hello , ${decoded.username}`,
+      msg: `Hello , ${req.user.username}`,
       secret: `Here is your authourized data, your lucky number is ${luckyNumber} `,
     });
 
-    console.log(decoded)
-  } catch (error) {
-    throw new CustomAPIError("Not authourized to access this route", 401);
-  }
+//     console.log(decoded)
+//   } catch (error) {
+//     throw new CustomAPIError("Not authourized to access this route", 401);
+//   }}
 
 
 };
